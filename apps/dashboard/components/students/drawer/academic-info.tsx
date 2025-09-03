@@ -28,46 +28,23 @@ export function AcademicInfo({ register, errors, watchedValues, resetField, setV
         <h3 className="text-lg font-semibold">Academic Information</h3>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="grade">Grade</Label>
-          <div className="flex space-x-2">
-            <Select value={watchedValues.grade ? String(watchedValues.grade) : '__NONE__'} onValueChange={(v) => setValue('grade', v === '__NONE__' ? '' : v)} disabled={!canEdit}>
-              <SelectTrigger className={errors.grade ? 'border-red-500' : ''}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__NONE__">Select grade</SelectItem>
-                {Array.from({ length: 12 }, (_, i) => (i + 1).toString()).map((g) => (
-                  <SelectItem key={g} value={g}>
-                    {g}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {canEdit && (
-              <Button type="button" variant="outline" size="sm" onClick={() => resetField('grade')} disabled={watchedValues.grade === originalData?.grade}>
-                <RotateCcw className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-          {errors.grade && <p className="text-sm text-red-500">{errors.grade.message}</p>}
-        </div>
-
+      <div className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="status">Status</Label>
-          <div className="flex space-x-2">
-            <Select value={watchedValues.status} onValueChange={(value) => setValue('status', value)} disabled={!canEdit}>
-              <SelectTrigger className={errors.status ? 'border-red-500' : ''}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Active">Active</SelectItem>
-                <SelectItem value="Archived">Archived</SelectItem>
-                <SelectItem value="Free-day">Free-day</SelectItem>
-                <SelectItem value="Waiting">Waiting</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex items-center space-x-2 w-full">
+            <div className="flex-1">
+              <Select value={watchedValues.status} onValueChange={(value) => setValue('status', value)} disabled={!canEdit}>
+                <SelectTrigger className={errors.status ? 'border-red-500' : ''}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Active">Active</SelectItem>
+                  <SelectItem value="Archived">Archived</SelectItem>
+                  <SelectItem value="Free-day">Free-day</SelectItem>
+                  <SelectItem value="Waiting">Waiting</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             {canEdit && (
               <Button type="button" variant="outline" size="sm" onClick={() => resetField('status')} disabled={watchedValues.status === originalData?.status}>
                 <RotateCcw className="h-4 w-4" />
@@ -78,23 +55,25 @@ export function AcademicInfo({ register, errors, watchedValues, resetField, setV
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="group">Study Group</Label>
-          <div className="flex space-x-2">
-            <Select value={watchedValues.group || '__NONE__'} onValueChange={(value) => setValue('group', value === '__NONE__' ? '' : value)} disabled={!canEdit}>
-              <SelectTrigger className={errors.group ? 'border-red-500' : ''}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__NONE__">Select group</SelectItem>
-                {studyGroups.map((group) => (
-                  <SelectItem key={group.id} value={group.name}>
-                    {group.name} {group.level ? `(${group.level})` : ''}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="flex items-center space-x-2 w-full">
+            <div className="flex-1">
+              <Select value={watchedValues.group || '__NONE__'} onValueChange={(value) => setValue('group', value === '__NONE__' ? '' : value)} disabled={!canEdit}>
+                <SelectTrigger className={errors.group ? 'border-red-500' : ''}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__NONE__">Select group</SelectItem>
+                  {studyGroups.map((group) => (
+                    <SelectItem key={group.id} value={group.name}>
+                      {group.name} {group.level ? `(${group.level})` : ''}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             {canEdit && (
               <Button type="button" variant="outline" size="sm" onClick={() => resetField('group')} disabled={watchedValues.group === originalData?.group}>
                 <RotateCcw className="h-4 w-4" />

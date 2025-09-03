@@ -6,7 +6,7 @@ import { Subscription } from './types'
 export default function SubscriptionsStats({ subscriptions, payments }: { subscriptions: Subscription[], payments: any[] }) {
   const totalRevenue = payments.reduce((s, p) => s + (p.amount || 0), 0)
   const counts = {
-    active: subscriptions.filter(s => s.status === 'active').length,
+    active: subscriptions.filter(s => s.status === 'active_fully_paid' || s.status === 'active_partially_paid').length,
     due_soon: subscriptions.filter(s => s.status === 'due_soon').length,
     expired: subscriptions.filter(s => s.status === 'expired').length,
   }

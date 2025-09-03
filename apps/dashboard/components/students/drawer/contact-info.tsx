@@ -6,6 +6,7 @@ import { Input } from '@workspace/ui/components/ui/input'
 import { Button } from '@workspace/ui/components/ui/button'
 import { Phone } from 'lucide-react'
 import { PhoneInput } from '@/components/ui/phone-input'
+import { Switch } from '@workspace/ui/components/ui/switch'
 import { validatePhoneNumber } from '@/utils/phone-utils'
 
 export type ContactInfoProps = {
@@ -78,6 +79,74 @@ export function ContactInfo({
         {/* show validation errors */}
         {errors.parentPhone && (
           <p className="text-sm text-red-500">{errors.parentPhone.message}</p>
+        )}
+      </div>
+
+      {/* WhatsApp Phone Option */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="whatsapp">WhatsApp number</Label>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="hasWhatsapp"
+              checked={Boolean(watchedValues.hasWhatsapp)}
+              onCheckedChange={(checked) => {
+                // store the flag explicitly to avoid toggling loops when the phone is empty
+                setValue('hasWhatsapp', checked, { shouldDirty: true, shouldValidate: true })
+                if (!checked) {
+                  // clear whatsappPhone when toggled off
+                  setValue('whatsappPhone', '', { shouldDirty: true, shouldValidate: true })
+                } else {
+                  // prefill with parentPhone when toggled on and whatsappPhone is empty
+                  const fallback = watchedValues.whatsappPhone || watchedValues.parentPhone || ''
+                  if (!fallback) return
+                  setValue('whatsappPhone', fallback, { shouldDirty: true, shouldValidate: true })
+                }
+              }}
+              disabled={!canEdit}
+            />
+          </div>
+        </div>
+
+        <div className="flex space-x-2">
+          <div className="flex-1">
+            <PhoneInput
+              value={watchedValues.whatsappPhone || ''}
+              onChange={(value) => {
+                setValue('whatsappPhone', value, {
+                  shouldDirty: true,
+                  shouldValidate: true
+                })
+                // if user types a number, ensure the hasWhatsapp flag is on
+                if (value && !watchedValues.hasWhatsapp) {
+                  setValue('hasWhatsapp', true, { shouldDirty: true, shouldValidate: true })
+                }
+                // if cleared, unset the flag
+                if (!value && watchedValues.hasWhatsapp) {
+                  setValue('hasWhatsapp', false, { shouldDirty: true, shouldValidate: true })
+                }
+              }}
+              allowedCountries={["EG", "AE"]}
+              defaultCountryCode="EG"
+              disabled={!canEdit || !watchedValues.hasWhatsapp}
+            />
+          </div>
+          {canEdit && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setValue('whatsappPhone', '', { shouldDirty: true, shouldValidate: true })}
+              disabled={!watchedValues.whatsappPhone || watchedValues.whatsappPhone === originalData?.whatsappPhone}
+              className="mt-2 self-start"
+              title="Reset whatsapp number"
+            >
+              Reset
+            </Button>
+          )}
+        </div>
+        {errors.whatsappPhone && (
+          <p className="text-sm text-red-500">{errors.whatsappPhone.message}</p>
         )}
       </div>
 

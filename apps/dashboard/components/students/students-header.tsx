@@ -36,7 +36,7 @@ export function StudentsHeader(props: StudentsHeaderProps) {
 
   if (showImportedPage) {
     return (
-      <div className="p-4">
+      <div>
         <h2 className="text-2xl font-bold mb-4">Imported Students</h2>
         <div className="mb-6">
           <h3 className="font-semibold mb-2">Valid Students ({importedValidStudents.length})</h3>

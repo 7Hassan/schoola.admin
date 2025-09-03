@@ -4,12 +4,14 @@ import React from 'react'
 import { Subscription } from './types'
 
 function statusBadge(status: Subscription['status']) {
-  if (status === 'active') return 'text-green-600 bg-green-100'
+  if (status === 'active_fully_paid') return 'text-green-600 bg-green-100'
+  if (status === 'active_partially_paid') return 'text-green-700 bg-green-50'
   if (status === 'due_soon') return 'text-yellow-600 bg-yellow-100'
+  if (status === 'on_hold') return 'text-gray-700 bg-gray-100'
   return 'text-red-600 bg-red-100'
 }
 
-export default function SubscriptionsGrid({ items, onDelete, onUpdateStatus, isDeleteMode = false, selectedIds = [], onToggleSelect, onRequestDelete }: { items: Subscription[], onDelete: (id: string) => void, onUpdateStatus: (id: string, status: Subscription['status']) => void, isDeleteMode?: boolean, selectedIds?: string[], onToggleSelect?: (id: string) => void, onRequestDelete?: (id: string) => void }) {
+export default function SubscriptionsGrid({ items, onDelete, onUpdateStatus, onRenew, onAddPayment, isDeleteMode = false, selectedIds = [], onToggleSelect, onRequestDelete }: { items: Subscription[], onDelete: (id: string) => void, onUpdateStatus: (id: string, status: Subscription['status']) => void, onRenew?: (id: string) => void, onAddPayment?: (id: string) => void, isDeleteMode?: boolean, selectedIds?: string[], onToggleSelect?: (id: string) => void, onRequestDelete?: (id: string) => void }) {
   return (
     <div className="bg-white rounded-lg shadow-sm border">
       <div className="p-6">
@@ -44,17 +46,19 @@ export default function SubscriptionsGrid({ items, onDelete, onUpdateStatus, isD
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.planName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.planType}{s.planName ? ` — ${s.planName}` : ''}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.startDate}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.endDate}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusBadge(s.status)}`}>{s.status.replace('_', ' ')}</span>
+                    <div className="text-sm text-gray-900">{s.sessionsUsed}/{s.sessionsTotal}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusBadge(s.status)}`}>{s.status.replaceAll('_', ' ')}</span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex items-center gap-3">
-                      <button className="text-blue-600 hover:text-blue-900" onClick={() => onUpdateStatus(s.id, 'active')}>Active</button>
-                      <button className="text-yellow-600 hover:text-yellow-900" onClick={() => onUpdateStatus(s.id, 'due_soon')}>Due soon</button>
-                      <button className="text-red-600 hover:text-red-900" onClick={() => onUpdateStatus(s.id, 'expired')}>Expired</button>
+                      <button className="text-blue-600 hover:text-blue-900" onClick={() => onRenew && onRenew(s.id)}>Renew</button>
+                      <button className="text-green-600 hover:text-green-900" onClick={() => onAddPayment && onAddPayment(s.id)}>Add Payment</button>
                       <button className="text-gray-600 hover:text-gray-900" onClick={() => { if (onRequestDelete) onRequestDelete(s.id); else onDelete(s.id) }}>Delete</button>
                     </div>
                   </td>

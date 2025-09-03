@@ -105,31 +105,28 @@ export function CoursesDashboard() {
   }
 
   return (
-    <div className="space-y-6 p-6 h-screen overflow-y-auto">
+    <div className="space-y-6 p-6 min-h-screen overflow-y-auto">
       {/* Header */}
       <div
-        className={`flex items-center justify-between p-4 rounded-lg transition-colors ${
-          isDeleteMode
+        className={`flex items-center justify-between p-4 rounded-lg transition-colors ${isDeleteMode
             ? 'bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800'
             : ''
-        }`}
+          }`}
       >
         <div>
           <h1
-            className={`text-3xl font-bold transition-colors ${
-              isDeleteMode
+            className={`text-3xl font-bold transition-colors ${isDeleteMode
                 ? 'text-red-900 dark:text-red-100'
                 : 'text-gray-900 dark:text-gray-100'
-            }`}
+              }`}
           >
             {isDeleteMode ? 'Delete Courses' : 'Courses Management'}
           </h1>
           <p
-            className={`mt-1 transition-colors ${
-              isDeleteMode
+            className={`mt-1 transition-colors ${isDeleteMode
                 ? 'text-red-700 dark:text-red-300'
                 : 'text-gray-600 dark:text-gray-400'
-            }`}
+              }`}
           >
             {isDeleteMode
               ? `${selectedCoursesForDeletion.length} course${selectedCoursesForDeletion.length !== 1 ? 's' : ''} selected for deletion`
