@@ -170,6 +170,8 @@ export function formatStudentsForExport(students: any[]): ExportableRecord[] {
     Name: student.name,
     Age: student.age,
     'Parent Phone': student.parentPhone,
+  'Has WhatsApp': student.hasWhatsapp ? 'Yes' : 'No',
+  'WhatsApp': student.whatsappPhone || '',
     Email: student.email,
     Group: student.group,
     Status: student.status,

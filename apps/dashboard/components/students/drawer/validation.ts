@@ -25,6 +25,9 @@ export const studentSchema = z.object({
   status: z.enum(['Active', 'Archived', 'Free-day', 'Waiting']),
   group: z.string(),
   info: z.string()
+  ,
+  hasWhatsapp: z.boolean().optional(),
+  whatsappPhone: z.string().optional()
 }).refine(
   (data) => {
     // If group is empty, info (note) is required
@@ -37,6 +40,18 @@ export const studentSchema = z.object({
   {
     message: 'Note is required if no group is selected',
     path: ['info']
+  }
+).refine(
+  (data) => {
+    // If hasWhatsapp is true then whatsappPhone must be a valid phone
+    if (data.hasWhatsapp) {
+      return !!data.whatsappPhone && validatePhoneNumber(data.whatsappPhone).isValid
+    }
+    return true
+  },
+  {
+    message: 'WhatsApp phone is required when WhatsApp is enabled',
+    path: ['whatsappPhone']
   }
 )
 
@@ -52,5 +67,7 @@ export const getDefaultFormValues = (): StudentFormData => ({
   paid: false,
   status: 'Waiting',
   group: '',
-  info: ''
+  info: '',
+  hasWhatsapp: false,
+  whatsappPhone: ''
 })

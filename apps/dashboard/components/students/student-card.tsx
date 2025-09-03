@@ -35,7 +35,7 @@ export function StudentCard({ student }: StudentCardProps) {
 
   return (
     <Card
-      className={`p-6 transition-all duration-200 cursor-pointer group ${isDeleteMode
+      className={`p-3 transition-all duration-200 cursor-pointer group ${isDeleteMode
         ? isSelectedForDeletion
           ? 'border-2 border-red-500 bg-red-50 dark:bg-red-950/20 shadow-lg'
           : 'border-2 border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-700'
@@ -43,20 +43,17 @@ export function StudentCard({ student }: StudentCardProps) {
         }`}
       onClick={handleCardClick}
     >
-      <div className="flex items-start justify-between mb-4">
-        <StudentHeader
-          childName={student.childName}
-          parentName={student.parentName}
-          id={student.id}
-          isDeleteMode={isDeleteMode}
-          isSelectedForDeletion={isSelectedForDeletion}
-          StudentAvatar={StudentAvatar}
-        />
-        <div className="flex flex-col items-end space-y-2">
-          <StudentStatusBadges status={student.status} paid={student.paid} />
-        </div>
-      </div>
-      <StudentContact parentPhone={student.parentPhone} />
+      <StudentHeader
+        childName={student.childName}
+        parentName={student.parentName}
+        id={student.id}
+        isDeleteMode={isDeleteMode}
+        isSelectedForDeletion={isSelectedForDeletion}
+        StudentAvatar={StudentAvatar}
+        status={student.status}
+        paid={student.paid}
+      />
+      <StudentContact parentPhone={student.parentPhone} hasWhatsapp={student.hasWhatsapp} whatsappPhone={student.whatsappPhone} />
 
       <StudentDetails
         age={student.age}

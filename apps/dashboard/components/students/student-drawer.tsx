@@ -66,6 +66,8 @@ export function StudentDrawer() {
         childName: selectedStudent.childName,
         parentName: selectedStudent.parentName,
         parentPhone: selectedStudent.parentPhone,
+        hasWhatsapp: selectedStudent.hasWhatsapp,
+        whatsappPhone: selectedStudent.whatsappPhone,
         age: selectedStudent.age,
         email: selectedStudent.email,
         source: selectedStudent.source,

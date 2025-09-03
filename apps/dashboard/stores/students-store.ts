@@ -16,6 +16,8 @@ export interface Student {
   parentName: string
   code: string
   parentPhone: string
+  hasWhatsapp?: boolean
+  whatsappPhone?: string
   age: number
   email: string
   source: string
@@ -33,6 +35,7 @@ export interface StudentFilters {
   paidFilter: 'all' | 'paid' | 'unpaid'
   studyGroups: string[]
   dateRange: [Date | null, Date | null]
+  updatedDateRange: [Date | null, Date | null]
   sourceCode: string
   searchQuery: string
   phoneQuery: string
@@ -94,6 +97,7 @@ const defaultFilters: StudentFilters = {
   paidFilter: 'all',
   studyGroups: [],
   dateRange: [null, null],
+  updatedDateRange: [null, null],
   sourceCode: '',
   searchQuery: '',
   phoneQuery: ''
@@ -115,6 +119,8 @@ const mockStudents: Student[] = [
     childName: 'Ahmed',
     parentName: 'Hassan',
     parentPhone: '+20 123 456 7890',
+  hasWhatsapp: true,
+  whatsappPhone: '+20 123 456 7890',
     age: 12,
     email: 'ahmed.hassan@email.com',
     source: 'Website',
@@ -131,6 +137,8 @@ const mockStudents: Student[] = [
     childName: 'Sarah',
     parentName: 'Johnson',
     parentPhone: '+1 555 123 4567',
+  hasWhatsapp: false,
+  whatsappPhone: '',
     age: 15,
     email: 'sarah.johnson@email.com',
     source: 'Referral',
@@ -147,6 +155,8 @@ const mockStudents: Student[] = [
     childName: 'Mohammed',
     parentName: 'Al-Rashid',
     parentPhone: '+966 50 123 4567',
+  hasWhatsapp: true,
+  whatsappPhone: '+966 50 123 4567',
     age: 14,
     email: 'mohammed.rashid@email.com',
     source: 'Social Media',
@@ -163,6 +173,8 @@ const mockStudents: Student[] = [
     childName: 'Emily',
     parentName: 'Davis',
     parentPhone: '+44 20 7123 4567',
+  hasWhatsapp: false,
+  whatsappPhone: '',
     age: 11,
     email: 'emily.davis@email.com',
     source: 'Google Ads',
@@ -225,9 +237,16 @@ export const useStudentsStore = create<StudentsStore>((set, get) => ({
     }),
 
   addStudent: (studentData) => {
+    // ensure whatsappPhone falls back to parentPhone when empty
+    const parent = (studentData.parentPhone || '').toString().trim()
+    const whatsappFromInput = (studentData.whatsappPhone || '').toString().trim()
+    const finalWhatsapp = whatsappFromInput || parent || ''
+
     const newStudent: Student = {
       id: `student_${Date.now()}`,
       ...studentData,
+      whatsappPhone: finalWhatsapp,
+      hasWhatsapp: !!finalWhatsapp,
       createdAt: new Date(),
       lastUpdatedAt: new Date()
     }
@@ -242,11 +261,24 @@ export const useStudentsStore = create<StudentsStore>((set, get) => ({
 
   updateStudent: (id, updates) =>
     set((state) => ({
-      students: state.students.map((student) =>
-        student.id === id
-          ? { ...student, ...updates, lastUpdatedAt: new Date() }
-          : student
-      )
+      students: state.students.map((student) => {
+        if (student.id !== id) return student
+
+        // merge existing student with updates first
+        const merged: Student = { ...student, ...updates } as Student
+
+        // determine whatsapp fallback: prefer merged.whatsappPhone, else merged.parentPhone
+        const parent = (merged.parentPhone || '').toString().trim()
+        const whatsappFromMerged = (merged.whatsappPhone || '').toString().trim()
+        const finalWhatsapp = whatsappFromMerged || parent || ''
+
+        return {
+          ...merged,
+          whatsappPhone: finalWhatsapp,
+          hasWhatsapp: !!finalWhatsapp,
+          lastUpdatedAt: new Date()
+        }
+      })
     })),
 
   deleteStudents: (studentIds) =>
@@ -351,17 +383,32 @@ export const useStudentsStore = create<StudentsStore>((set, get) => ({
       if (filters.paidFilter === 'unpaid' && student.paid) return false
 
       // Study groups filter
-      if (
-        filters.studyGroups.length > 0 &&
-        !filters.studyGroups.includes(student.group)
-      ) {
-        return false
+      if (filters.studyGroups.length > 0) {
+        // filters.studyGroups stores group ids (or an empty string ('') for No Group).
+        // Students store the group name in student.group, so for non-empty ids we
+        // need to look up the group name by id from the store's studyGroups.
+        const selected = filters.studyGroups
+        const hasMatch = selected.some((sel) => {
+          if (sel === '') {
+            return !student.group || (typeof student.group === 'string' && student.group.trim() === '')
+          }
+          const grp = get().studyGroups.find((g) => g.id === sel)
+          const groupName = grp ? grp.name : null
+          return groupName ? student.group === groupName : false
+        })
+        if (!hasMatch) return false
       }
 
       // Date range filter
       if (filters.dateRange[0] && student.createdAt < filters.dateRange[0])
         return false
       if (filters.dateRange[1] && student.createdAt > filters.dateRange[1])
+        return false
+
+      // Updated date range filter (by lastUpdatedAt)
+      if (filters.updatedDateRange[0] && student.lastUpdatedAt < filters.updatedDateRange[0])
+        return false
+      if (filters.updatedDateRange[1] && student.lastUpdatedAt > filters.updatedDateRange[1])
         return false
 
       // Search query filter

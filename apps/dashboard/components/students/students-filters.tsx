@@ -24,6 +24,7 @@ export function StudentsFilters() {
   const [isStatusOpen, setIsStatusOpen] = useState(false)
   const [isGroupsOpen, setIsGroupsOpen] = useState(false)
   const [isDateRangeOpen, setIsDateRangeOpen] = useState(false)
+  const [isUpdatedDateRangeOpen, setIsUpdatedDateRangeOpen] = useState(false)
 
   const handleStatusToggle = (status: StudentStatus) => {
     const newStatus = filters.status.includes(status) ? filters.status.filter((s) => s !== status) : [...filters.status, status]
@@ -48,6 +49,10 @@ export function StudentsFilters() {
     updateFilters({ dateRange: [range?.from || null, range?.to || null] })
   }
 
+  const handleUpdatedDateRangeSelect = (range?: { from?: Date; to?: Date }) => {
+    updateFilters({ updatedDateRange: [range?.from || null, range?.to || null] })
+  }
+
   const clearAllFilters = () => {
     updateFilters({
       ageRange: [5, 18],
@@ -55,6 +60,7 @@ export function StudentsFilters() {
       paidFilter: 'all',
       studyGroups: [],
       dateRange: [null, null],
+      updatedDateRange: [null, null],
       sourceCode: '',
       searchQuery: '',
       phoneQuery: ''
@@ -67,6 +73,8 @@ export function StudentsFilters() {
     filters.studyGroups.length > 0 ||
     filters.dateRange[0] !== null ||
     filters.dateRange[1] !== null ||
+    filters.updatedDateRange[0] !== null ||
+    filters.updatedDateRange[1] !== null ||
     filters.sourceCode !== '' ||
     filters.searchQuery !== '' ||
     filters.phoneQuery !== '' ||
@@ -84,17 +92,27 @@ export function StudentsFilters() {
 
         <PaymentFilter paidFilter={filters.paidFilter} updateFilters={updateFilters} />
 
-        <GroupsFilter
-          studyGroups={groupOptions}
-          selectedGroups={filters.studyGroups}
-          open={isGroupsOpen}
-          setOpen={setIsGroupsOpen}
-          onToggle={handleGroupToggle}
-        />
+          <GroupsFilter
+            studyGroups={groupOptions}
+            selectedGroups={filters.studyGroups}
+            open={isGroupsOpen}
+            setOpen={setIsGroupsOpen}
+            onToggle={handleGroupToggle}
+          />
 
         <DateRangeFilter dateRange={filters.dateRange} open={isDateRangeOpen} setOpen={setIsDateRangeOpen} onSelect={handleDateRangeSelect} />
 
+        <DateRangeFilter
+          dateRange={filters.updatedDateRange}
+          open={isUpdatedDateRangeOpen}
+          setOpen={setIsUpdatedDateRangeOpen}
+          onSelect={handleUpdatedDateRangeSelect}
+          label="Updated Date"
+          title="Updated Date Range"
+        />
+
         <PhoneSearch phoneQuery={filters.phoneQuery} updateFilters={updateFilters} />
+
 
         <SearchInput searchQuery={filters.searchQuery} updateFilters={updateFilters} />
       </div>

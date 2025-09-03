@@ -13,12 +13,14 @@ export interface DateRangeFilterProps {
   open: boolean
   setOpen: (v: boolean) => void
   onSelect: (range?: { from?: Date; to?: Date }) => void
+  label?: string
+  title?: string
 }
 
-export function DateRangeFilter({ dateRange, open, setOpen, onSelect }: DateRangeFilterProps) {
+export function DateRangeFilter({ dateRange, open, setOpen, onSelect, label = 'Registration Date', title = 'Registration Date Range' }: DateRangeFilterProps) {
   return (
     <div className="space-y-2">
-      <Label className="text-sm font-medium">Registration Date</Label>
+      <Label className="text-sm font-medium">{label}</Label>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" className={!dateRange[0] && !dateRange[1] ? 'text-muted-foreground w-full justify-start text-left font-normal' : 'w-full justify-start text-left font-normal'}>
@@ -32,7 +34,7 @@ export function DateRangeFilter({ dateRange, open, setOpen, onSelect }: DateRang
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <div className="p-3 border-b flex justify-between items-center">
-            <span className="text-sm font-medium">Registration Date Range</span>
+            <span className="text-sm font-medium">{title}</span>
             {(dateRange[0] || dateRange[1]) && (
               <Button variant="ghost" size="sm" onClick={() => onSelect(undefined)} className="h-6 px-2 text-xs">
                 <RotateCcw className="h-3 w-3 mr-1" />
