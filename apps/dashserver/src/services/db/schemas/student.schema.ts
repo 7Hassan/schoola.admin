@@ -1,7 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import { StudentDocument, EntityStatus, Gender } from '../../../types';
 import { addressSchema, emergencyContactSchema, phoneSchema, healthSchema } from './shared.schemas';
-import { nanoid } from 'nanoid';
 
 export const studentSchema = new Schema<StudentDocument>(
   {
@@ -84,10 +83,6 @@ studentSchema.virtual('computedFullName').get(function (this: StudentDocument) {
 
 // Pre-save middleware to generate student code and full name
 studentSchema.pre('save', async function (this: StudentDocument, next) {
-  if (this.isNew && !this.studentCode) {
-    this.studentCode = `STU-${nanoid()}`;
-  }
-
   // Build fullName from childName and parentName when provided
   if (!this.fullName) {
     const parts: string[] = [];
