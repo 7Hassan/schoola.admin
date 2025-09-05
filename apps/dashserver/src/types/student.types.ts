@@ -6,10 +6,29 @@ import { BaseDocument } from './mongodb.base.types';
 export interface StudentDocument
   extends Omit<SharedStudent, 'id' | 'enrolledCourses' | 'groupIds' | 'authorityId'>,
     BaseDocument {
-  studentCode: string;
   enrolledCourses: Types.ObjectId[];
   groupIds: Types.ObjectId[];
   authorityId?: Types.ObjectId;
+  // Frontend-friendly optional fields
+  childName?: string;
+  parentName?: string;
+  parentPhone?: any;
+  whatsappPhone?: any;
+  hasWhatsapp?: boolean;
+  contacts?: {
+    parent?: { phone?: any; whatsapp?: any };
+    child?: { phone?: any; whatsapp?: any };
+  };
+  info?: {
+    dateOfBirth?: Date;
+    gender?: string;
+    address?: any;
+    profilePhoto?: string;
+  emergencyContact?: any;
+  health?: { hasDisease?: boolean; diseaseDetails?: string };
+  };
+  group?: any;
+  paid?: boolean;
 }
 
 // Input types for creating/updating student documents

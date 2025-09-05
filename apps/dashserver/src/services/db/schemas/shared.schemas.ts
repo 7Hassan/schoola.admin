@@ -83,6 +83,15 @@ export const contactInfoSchema = new Schema(
   { _id: false },
 );
 
+// Health subdocument schema - used in student info
+export const healthSchema = new Schema(
+  {
+    hasDisease: { type: Boolean, default: false },
+    diseaseDetails: { type: String, trim: true },
+  },
+  { _id: false },
+);
+
 // Payment fees subdocument schema - Used in payment transactions
 export const paymentFeesSchema = new Schema(
   {
